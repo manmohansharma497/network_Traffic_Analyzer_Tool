@@ -1,0 +1,160 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Network Traffic Analyzer</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f4f8; color: #333; }
+        .container { width: 80%; margin: auto; padding: 20px; }
+        h1 { text-align: center; color: #4CAF50; }
+        .button { display: inline-block; padding: 10px 20px; font-size: 16px; margin: 10px; border-radius: 5px; cursor: pointer; color: #fff; background-color: #007bff; }
+        .button:hover { background-color: #0056b3; }
+        .data-summary { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Network Traffic Analyzer</h1>
+        
+        <button id="startButton" class="button" onclick="startSniffing()">Start Sniffing</button>
+        <button id="stopButton" class="button" onclick="stopSniffing()">Stop Sniffing</button>
+        <button id="analyzeButton" class="button" onclick="analyzeData()">Analyze Data</button>
+        <button id="downloadPcap" class="button" onclick="downloadFile('pcap')">Download PCAP</button>
+        <button id="downloadCsv" class="button" onclick="downloadFile('csv')">Download CSV</button>
+        
+        <div id="statusMessage"></div>
+        
+        <div class="data-summary" id="dataSummary">
+            <h2>Data Summary</h2>
+            <div id="summaryContent">No data available. Please start sniffing and then analyze data.</div>
+        </div>
+    </div>
+    
+    <script>
+        function startSniffing() {
+            fetch('/start_sniffing', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("statusMessage").innerText = data.status;
+                });
+        }
+
+        function stopSniffing() {
+            fetch('/stop_sniffing', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("statusMessage").innerText = data.status;
+                });
+        }
+
+        function analyzeData() {
+            fetch('/analyze_data', { method: 'POST' })
+                .then(response => response.json())
+                .then(summary => {
+                    let content = `
+                        <table>
+                            <tr><th>Top Sources</th><th>Top Destinations</th><th>Protocol Counts</th></tr>
+                            <tr>
+                                <td>${Object.entries(summary.Top_Sources).map(([ip, count]) => `${ip}: ${count}`).join("<br>")}</td>
+                                <td>${Object.entries(summary.Top_Destinations).map(([ip, count]) => `${ip}: ${count}`).join("<br>")}</td>
+                                <td>${Object.entries(summary.Protocol_Counts).map(([protocol, count]) => `${protocol}: ${count}`).join("<br>")}</td>
+                            </tr>
+                        </table>`;
+                    document.getElementById("summaryContent").innerHTML = content;
+                });
+        } -->
+<!-- 
+        function downloadFile(type) {
+            window.location.href = `/download/${type}`;
+        }
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Network Traffic Analyzer</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f4f8; color: #333; }
+        .container { width: 80%; margin: auto; padding: 20px; }
+        h1 { text-align: center; color: #4CAF50; }
+        .button { display: inline-block; padding: 10px 20px; font-size: 16px; margin: 10px; border-radius: 5px; cursor: pointer; color: #fff; background-color: #007bff; }
+        .button:hover { background-color: #0056b3; }
+        .data-summary { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Network Traffic Analyzer</h1>
+        
+        <button id="startButton" class="button" onclick="startSniffing()">Start Sniffing</button>
+        <button id="stopButton" class="button" onclick="stopSniffing()">Stop Sniffing</button>
+        <button id="analyzeButton" class="button" onclick="analyzeData()">Analyze Data</button>
+        <button id="downloadPcap" class="button" onclick="downloadFile('pcap')">Download PCAP</button>
+        <button id="downloadCsv" class="button" onclick="downloadFile('csv')">Download CSV</button>
+        
+        <div id="statusMessage"></div>
+        
+        <div class="data-summary" id="dataSummary">
+            <h2>Data Summary</h2>
+            <div id="summaryContent">No data available. Please start sniffing and analyze data.</div>
+        </div>
+        
+        <div id="graphs">
+            <h2>Generated Graphs</h2>
+            <a id="networkGraph" href="#" target="_blank">Network Graph</a><br>
+            <img id="protocolGraph" src="#" alt="Protocol Graph" style="width: 600px; display: none;">
+        </div>
+    </div>
+    
+    <script>
+        function startSniffing() {
+            fetch('/start_sniffing', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("statusMessage").innerText = data.status;
+                });
+        }
+
+        function stopSniffing() {
+            fetch('/stop_sniffing', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("statusMessage").innerText = data.status;
+                });
+        }
+
+        function analyzeData() {
+            fetch('/analyze_data', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    let summary = data.summary;
+                    let content = `
+                        <table>
+                            <tr><th>Top Sources</th><th>Top Destinations</th><th>Protocol Counts</th></tr>
+                            <tr>
+                                <td>${Object.entries(summary["Top Sources"]).map(([k, v]) => `${k}: ${v}`).join("<br>")}</td>
+                                <td>${Object.entries(summary["Top Destinations"]).map(([k, v]) => `${k}: ${v}`).join("<br>")}</td>
+                                <td>${Object.entries(summary["Protocol Counts"]).map(([k, v]) => `${k}: ${v}`).join("<br>")}</td>
+                            </tr>
+                        </table>`;
+                    document.getElementById("summaryContent").innerHTML = content;
+                    document.getElementById("networkGraph").href = data.graph_url;
+                    document.getElementById("protocolGraph").src = data.bar_graph_url;
+                    document.getElementById("protocolGraph").style.display = "block";
+                });
+        }
+
+        function downloadFile(type) {
+            window.location.href = `/download/${type}`;
+        }
+    </script>
+</body>
+</html>
